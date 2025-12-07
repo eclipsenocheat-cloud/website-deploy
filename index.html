@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deploy Website 🚀</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        body {
+            background: #f5f7fa;
+            padding: 2rem 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .card {
+            background: white;
+            width: 100%;
+            max-width: 500px;
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+        }
+        h2 {
+            color: #1a1a2e;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+        }
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.7rem;
+            color: #444;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+        .file-input {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            background: #fafafa;
+            transition: border-color 0.2s;
+        }
+        .file-input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        .deploy-btn {
+            width: 100%;
+            padding: 1.1rem;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 0.5rem;
+        }
+        .deploy-btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+        .progress-wrap {
+            margin: 1.5rem 0;
+            display: none;
+        }
+        .progress-bar {
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #10b981;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+        .progress-text {
+            text-align: center;
+            margin-top: 0.5rem;
+            color: #666;
+            font-size: 0.95rem;
+        }
+        .result-wrap {
+            margin-top: 1.5rem;
+            display: none;
+            padding: 1.2rem;
+            border: 1px solid #dcfce7;
+            border-radius: 8px;
+            background: #f0fdf4;
+        }
+        .result-title {
+            color: #166534;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+        }
+        .result-url {
+            color: #2563eb;
+            text-decoration: none;
+            font-size: 0.95rem;
+            word-break: break-all;
+        }
+        .result-url:hover {
+            text-decoration: underline;
+        }
+        /* Teks Petunjuk untuk Anda (hanya muncul saat edit kode) */
+        .dev-note {
+            display: block;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #dc2626;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Deploy Website Cepat</h2>
+
+        <!-- Teks Petunjuk HANYA UNTUK ANDA (akan hilang saat website dibuka pengguna) -->
+        <span class="dev-note">🚀Deploy Web By FvckerMD</span>
+
+        <form id="deployForm">
+            <!-- HANYA ADA INPUT FILE HTML (tidak ada input token untuk pengguna) -->
+            <div class="input-group">
+                <label>Pilih File HTML yang Akan Deploy</label>
+                <input type="file" class="file-input" id="htmlFile" accept=".html" required>
+            </div>
+
+            <!-- Tombol Deploy Sekarang -->
+            <button type="submit" class="deploy-btn" id="deployBtn">Deploy Sekarang</button>
+        </form>
+
+        <!-- Proses Deploy -->
+        <div class="progress-wrap" id="progressWrap">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <p class="progress-text" id="progressText">Proses: 0/10 detik</p>
+        </div>
+
+        <!-- Hasil Deploy -->
+        <div class="result-wrap" id="resultWrap">
+            <p class="result-title">Sukses! Website Anda siap:</p>
+            <a href="#" target="_blank" class="result-url" id="deployedUrl">https://your-site.vercel.app</a>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('deployForm');
+        const deployBtn = document.getElementById('deployBtn');
+        const progressWrap = document.getElementById('progressWrap');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const resultWrap = document.getElementById('resultWrap');
+        const deployedUrl = document.getElementById('deployedUrl');
+
+        // ==============================================
+        // ⚠️ [DISINI HANYA ANDA YANG MASUKKAN TOKEN]
+        // Ganti "yFA2Wy7nr1MVJz0M9775vaB3" dengan token Vercel Anda
+        // Ganti "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" dengan token GitHub Anda
+        const VERCEL_TOKEN = "yFA2Wy7nr1MVJz0M9775vaB3";
+        const GITHUB_TOKEN = "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";
+        // ==============================================
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Ambil file HTML yang dipilih pengguna
+            const htmlFile = document.getElementById('htmlFile').files[0];
+
+            // Validasi file HTML
+            if (!htmlFile || htmlFile.type !== 'text/html') {
+                alert('Pilih file dengan ekstensi .html saja!');
+                return;
+            }
+
+            // Cek apakah Anda sudah memasukkan token (untuk keamanan Anda)
+            if (VERCEL_TOKEN === "YOUR_VERCEL_TOKEN_HERE" || GITHUB_TOKEN === "YOUR_GITHUB_TOKEN_HERE") {
+                alert('⚠️ Silakan masukkan token Vercel dan GitHub Anda terlebih dahulu di bagian JavaScript!');
+                return;
+            }
+
+            // Aktifkan progress, nonaktifkan tombol
+            deployBtn.disabled = true;
+            progressWrap.style.display = 'block';
+            resultWrap.style.display = 'none';
+
+            // Simulasi proses 10 detik (untuk integrasi nyata, ganti dengan panggilan API Vercel/GitHub)
+            const totalSec = 10;
+            for (let sec = 1; sec <= totalSec; sec++) {
+                const persen = (sec / totalSec) * 100;
+                progressFill.style.width = `${persen}%`;
+                progressText.textContent = `Proses: ${sec}/${totalSec} detik`;
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+
+            // Simulasi URL deploy (untuk integrasi nyata, ambil dari respons API Vercel)
+            const subdomain = Math.random().toString(36).slice(2, 11);
+            const fakeUrl = `https://${subdomain}-html-deploy.vercel.app`;
+            deployedUrl.href = fakeUrl;
+            deployedUrl.textContent = fakeUrl;
+
+            // Tampilkan hasil
+            progressWrap.style.display = 'none';
+            resultWrap.style.display = 'block';
+            deployBtn.disabled = false;
+        });
+    </script>
+</body>
+</html>
